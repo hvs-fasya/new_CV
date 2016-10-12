@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 // import RaisedButton from 'material-ui/RaisedButton';
 // import Dialog from 'material-ui/Dialog';
 import {pink900} from 'material-ui/styles/colors';
@@ -9,6 +9,9 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import {Link} from 'react-router';
+import {List, ListItem, MakeSelectable} from 'material-ui/List';
+
+let SelectableList = MakeSelectable(List);
 
 const styles = {
   containerStyle: {
@@ -37,9 +40,12 @@ class Resume extends Component {
     super(props, context);
     this.state = {
 	    lang: "en",
-		open: false,
+		open: true,
+		selectedIndex: 1,
 	  };
     };
+
+
 
     handleToggle = () => this.setState({open: !this.state.open});
 
@@ -47,6 +53,13 @@ class Resume extends Component {
 
   	changeLanguage = () =>
 		this.setState({lang: this.state.lang == 'en' ? 'ru' : 'en'});
+
+	handleRequestChange (event, index) {
+        this.setState({
+            selectedIndex: index
+        });
+        this.handleClose();
+    };
 	  
 
 	render() {
@@ -62,11 +75,15 @@ class Resume extends Component {
 						iconElementRight={<FlatButton label="eng/рус" onTouchTap={this.changeLanguage}/>}
 						onLeftIconButtonTouchTap={this.handleToggle} 
 						style={{position: 'fixed', top: 0}}/>
+        				{this.props.children}
 					<Drawer 
 						open={this.state.open} 
 						docked={false}
 						onRequestChange={(open) => this.setState({open})}>
-			          {menuItems}
+						<SelectableList value={this.state.selectedIndex} 
+										onChange={this.handleRequestChange.bind(this)}>
+			          		{menuItems}
+			          	</SelectableList>
 			        </Drawer>
 			     </div>
 	        </MuiThemeProvider>
@@ -78,29 +95,19 @@ class Resume extends Component {
 	switch(this.state.lang){
 		case "en": return (
 			[
-				<MenuItem linkButton={true} containerElement={<Link to="/shortbio" />} primaryText="Short Bio" />,
-			    <MenuItem linkButton={true} containerElement={<Link to="/diplomas" />} primaryText="Diplomas & Certificates" />,
-			    <MenuItem linkButton={true} containerElement={<Link to="/fullbio" />} primaryText="Jobs" />,
+				<ListItem value={1} containerElement={<Link to="/shortbio" />} primaryText="Short Bio" />,
+			    <ListItem value={2} containerElement={<Link to="/diplomas" />} primaryText="Diplomas & Certificates" />,
+			    <ListItem value={3} containerElement={<Link to="/fullbio" />} primaryText="Jobs" />,
 			        
 			]
 				);
 		case "ru": return (
 			[
-				
-				<MenuItem linkButton={true} containerElement={<Link to="/shortbio" />} primaryText="Основные сведения" />,
-			    <MenuItem linkButton={true} containerElement={<Link to="/diplomas" />} primaryText="Дипломы и сертификаты" />,
-			    <MenuItem linkButton={true} containerElement={<Link to="/fullbio" />} primaryText="Опыт работы" />,
+				<ListItem value={1} containerElement={<Link to="/shortbio" />} primaryText="Основные сведения" />,
+			    <ListItem value={2} containerElement={<Link to="/diplomas" />} primaryText="Дипломы и сертификаты" />,
+			    <ListItem value={3} containerElement={<Link to="/fullbio" />} primaryText="Опыт работы" />,
 			]
 				);
-		}
-	}
-
-	_getSelectedIndex() {
-	let currentItem;
-	let menuItems = this._getMenuItems();
-	for (let i = menuItems.length - 1; i >= 0; i--) {
-		currentItem = menuItems[i];
-		if (currentItem.route && this.context.router.isActive(currentItem.route)) return i;
 		}
 	}
 
