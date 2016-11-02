@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 // import RaisedButton from 'material-ui/RaisedButton';
 // import Dialog from 'material-ui/Dialog';
 import {pink900} from 'material-ui/styles/colors';
@@ -7,7 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
+// import MenuItem from 'material-ui/MenuItem';
 import {Link} from 'react-router';
 import {List, ListItem, MakeSelectable} from 'material-ui/List';
 
@@ -30,9 +30,9 @@ const muiTheme = getMuiTheme({
   },
 });
 
-let Router = require('react-router');
+// let Router = require('react-router');
 // let mui = require('material-ui');
-let RouteHandler = Router.RouteHandler;
+// let RouteHandler = Router.RouteHandler;
 // let Colors = mui.Styles.Colors;
 class Resume extends Component {
   	
@@ -45,14 +45,12 @@ class Resume extends Component {
 	  };
     };
 
-
-
     handleToggle = () => this.setState({open: !this.state.open});
 
   	handleClose = () => this.setState({open: false});
 
   	changeLanguage = () =>
-		this.setState({lang: this.state.lang == 'en' ? 'ru' : 'en'});
+		this.setState({lang: this.state.lang === 'en' ? 'ru' : 'en'});
 
 	handleRequestChange (event, index) {
         this.setState({
@@ -65,7 +63,7 @@ class Resume extends Component {
 	render() {
 		let menuItems = this._getMenuItems();
 		let cv = this.state.lang === "en" ? "Tolkacheva Elena (CV)" : "Толкачева Елена (резюме)";
-		
+		var childrenWithLang = React.cloneElement(this.props.children, {lang: this.state.lang});
 		return (
 			<MuiThemeProvider muiTheme={muiTheme}>
 	        	<div style={styles.containerStyle}>
@@ -75,7 +73,7 @@ class Resume extends Component {
 						iconElementRight={<FlatButton label="eng/рус" onTouchTap={this.changeLanguage}/>}
 						onLeftIconButtonTouchTap={this.handleToggle} 
 						style={{position: 'fixed', top: 0}}/>
-        				{this.props.children}
+			        	{childrenWithLang}
 					<Drawer 
 						open={this.state.open} 
 						docked={false}
@@ -95,19 +93,20 @@ class Resume extends Component {
 	switch(this.state.lang){
 		case "en": return (
 			[
-				<ListItem value={1} containerElement={<Link to="/shortbio" />} primaryText="Short Bio" />,
-			    <ListItem value={2} containerElement={<Link to="/diplomas" />} primaryText="Diplomas & Certificates" />,
-			    <ListItem value={3} containerElement={<Link to="/fullbio" />} primaryText="Jobs" />,
+				<ListItem key={1} containerElement={<Link to="/shortbio" />} primaryText="Short Bio" />,
+			    <ListItem key={2} containerElement={<Link to="/diplomas" />} primaryText="Diplomas & Certificates" />,
+			    <ListItem key={3} containerElement={<Link to="/fullbio" />} primaryText="Jobs" />,
 			        
 			]
 				);
 		case "ru": return (
 			[
-				<ListItem value={1} containerElement={<Link to="/shortbio" />} primaryText="Основные сведения" />,
-			    <ListItem value={2} containerElement={<Link to="/diplomas" />} primaryText="Дипломы и сертификаты" />,
-			    <ListItem value={3} containerElement={<Link to="/fullbio" />} primaryText="Опыт работы" />,
+				<ListItem key={1} containerElement={<Link to="/shortbio" />} primaryText="Основные сведения" />,
+			    <ListItem key={2} containerElement={<Link to="/diplomas" />} primaryText="Дипломы и сертификаты" />,
+			    <ListItem key={3} containerElement={<Link to="/fullbio" />} primaryText="Опыт работы" />,
 			]
 				);
+		default:
 		}
 	}
 
